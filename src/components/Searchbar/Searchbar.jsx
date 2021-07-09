@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import {
@@ -9,51 +9,45 @@ import {
   SearchFormButtonLabel,
 } from './Searchbar.styled';
 
-class Searchbar extends Component {
-  state = {
-    searchQuery: '',
+export default function Searchbar({ onSubmit }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchQueryChange = event => {
+    setSearchQuery(event.currentTarget.value.toLowerCase());
   };
 
-  handleSearchQueryChange = event => {
-    this.setState({ searchQuery: event.currentTarget.value.toLowerCase() });
-  };
-
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
 
-    if (this.state.searchQuery.trim() === '') {
+    if (searchQuery.trim() === '') {
       toast.error('Введите поисковый запрос.');
       return;
     }
 
-    this.props.onSubmit(this.state.searchQuery);
+    onSubmit(searchQuery);
   };
 
-  render() {
-    return (
-      <Header>
-        <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit">
-            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
-          </SearchFormButton>
+  return (
+    <Header>
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormButton type="submit">
+          <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+        </SearchFormButton>
 
-          <SearchFormInput
-            type="text"
-            name="searchQuery"
-            autocomplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            value={this.state.searchQuery}
-            onChange={this.handleSearchQueryChange}
-          />
-        </SearchForm>
-      </Header>
-    );
-  }
+        <SearchFormInput
+          type="text"
+          name="searchQuery"
+          autocomplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          value={searchQuery}
+          onChange={handleSearchQueryChange}
+        />
+      </SearchForm>
+    </Header>
+  );
 }
 
 Searchbar.propTypes = {
   onSubmit: PropTypes.func,
 };
-
-export default Searchbar;
