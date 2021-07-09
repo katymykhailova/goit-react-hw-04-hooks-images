@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import ImageGallery from 'components/ImageGallery';
 import apiService from 'services/apiService';
 import Button from 'components/Button';
-import Loader from 'components/Loader';
+import { Loader } from 'components/Loader/Loader';
 
 export default function FetchPictures({
   searchQuery,
@@ -23,6 +23,8 @@ export default function FetchPictures({
     if (!searchQuery) {
       return;
     }
+    setIsLoading(true);
+
     async function fetchPictures() {
       try {
         const pictures = await apiService.ApiService(searchQuery, page);
@@ -63,7 +65,6 @@ export default function FetchPictures({
   const onLoadMore = e => {
     e.preventDefault();
     setPage(state => state + 1);
-    setIsLoading(true);
   };
 
   return (

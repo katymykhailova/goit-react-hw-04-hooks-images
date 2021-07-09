@@ -3,6 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import Searchbar from 'components/Searchbar';
 import FetchPictures from 'components/FetchPictures';
 import Modal from 'components/Modal';
+import { ModalLoader } from 'components/Loader/Loader';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,6 +12,7 @@ export default function App() {
   const [imgTags, setImgTags] = useState('');
   const [page, setPage] = useState(1);
   const [pictures, setPictures] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFormSubmit = searchQuery => {
     setSearchQuery(searchQuery);
@@ -22,11 +24,17 @@ export default function App() {
     setLargeImageURL(largeImageURL);
     setImgTags(imgTags);
     toggleModal();
+    setIsLoading(true);
   };
 
   const toggleModal = () => {
     setShowModal(showModal => !showModal);
   };
+
+  const hideLoaderInModal = () =>
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 350);
 
   return (
     <>
@@ -42,7 +50,8 @@ export default function App() {
       <ToastContainer autoClose={3000} />
       {showModal && (
         <Modal onClose={toggleModal}>
-          <img src={largeImageURL} alt={imgTags} />
+          {isLoading && <ModalLoader />}
+          <img src={largeImageURL} alt={imgTags} onLoad={hideLoaderInModal} />;
         </Modal>
       )}
     </>
