@@ -11,11 +11,12 @@ export default function FetchPictures({
   searchQuery,
   handleImageClick,
   page,
-  pictures,
   setPage,
+  pictures,
   setPictures,
+  error,
+  setError,
 }) {
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [heightGallery, setHeightGallery] = useState(0);
 
@@ -44,7 +45,7 @@ export default function FetchPictures({
 
     const gallery = document.querySelector('#imageGallery');
     setHeightGallery(gallery.clientHeight);
-  }, [page, searchQuery, setPictures]);
+  }, [page, searchQuery, setError, setPictures]);
 
   useEffect(() => {
     toast.error(error);

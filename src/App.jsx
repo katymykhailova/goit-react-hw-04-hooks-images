@@ -13,11 +13,13 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [pictures, setPictures] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleFormSubmit = searchQuery => {
     setSearchQuery(searchQuery);
     setPage(1);
     setPictures([]);
+    setError(null);
   };
 
   const handleImageClick = (largeImageURL, imgTags) => {
@@ -43,9 +45,11 @@ export default function App() {
         searchQuery={searchQuery}
         handleImageClick={handleImageClick}
         page={page}
-        pictures={pictures}
         setPage={setPage}
+        pictures={pictures}
         setPictures={setPictures}
+        error={error}
+        setError={setError}
       />
       <ToastContainer autoClose={3000} />
       {showModal && (
