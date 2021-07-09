@@ -1,76 +1,66 @@
-import { Component } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Searchbar from 'components/Searchbar';
 import FetchPictures from 'components/FetchPictures';
 import Modal from 'components/Modal';
 
-class App extends Component {
-  state = {
-    searchQuery: '',
-    showModal: false,
-    largeImageURL: '',
-    imgTags: '',
-    heightGallery: 0,
-  };
+export default function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [largeImageURL, setLargeImageURL] = useState('');
+  const [imgTags, setImgTags] = useState('');
+  const [heightGallery, setHeightGallery] = useState(0);
 
-  componentDidUpdate(prevProps, prevState) {
-    const nextHeightGallery = this.state.heightGallery;
-    const prevHeightGallery = prevState.heightGallery;
+  let prevHeightGallery = useRef(0);
 
-    if (nextHeightGallery > prevHeightGallery && prevHeightGallery !== 0) {
-      this.scrollTo(prevHeightGallery);
+  useEffect(() => {
+    if (prevHeightGallery.current !== 0) {
+      scrollTo(prevHeightGallery.current);
     }
-  }
+    prevHeightGallery.current = heightGallery;
+  }, [heightGallery]);
 
-  handleFormSubmit = searchQuery => {
-    this.setState({ searchQuery });
+  const handleFormSubmit = searchQuery => {
+    setSearchQuery(searchQuery);
   };
 
-  handleImageClick = (largeImageURL, imgTags) => {
-    this.setState({ largeImageURL, imgTags });
-    this.toggleModal();
+  const handleImageClick = (largeImageURL, imgTags) => {
+    setLargeImageURL(largeImageURL);
+    setImgTags(imgTags);
+    toggleModal();
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
+  const toggleModal = () => {
+    setShowModal(showModal => !showModal);
   };
 
-  getHeightGallery = () => {
+  const getHeightGallery = () => {
     const gallery = document.querySelector('#imageGallery');
     const heightGallery = gallery.clientHeight;
-    this.setState({
-      heightGallery,
-    });
+    setHeightGallery(heightGallery);
   };
 
-  scrollTo(heightGallery) {
+  const scrollTo = heightGallery => {
     window.scrollTo({
       top: heightGallery,
       behavior: 'smooth',
     });
-  }
+  };
 
-  render() {
-    const { searchQuery, showModal, largeImageURL, imgTags } = this.state;
-    return (
-      <>
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <FetchPictures
-          searchQuery={searchQuery}
-          handleImageClick={this.handleImageClick}
-          getHeightGallery={this.getHeightGallery}
-        />
-        <ToastContainer autoClose={3000} />
-        {showModal && (
-          <Modal onClose={this.toggleModal}>
-            <img src={largeImageURL} alt={imgTags} />
-          </Modal>
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      <Searchbar onSubmit={handleFormSubmit} />
+      <FetchPictures
+        searchQuery={searchQuery}
+        handleImageClick={handleImageClick}
+        getHeightGallery={getHeightGallery}
+      />
+      <ToastContainer autoClose={3000} />
+      {showModal && (
+        <Modal onClose={toggleModal}>
+          <img src={largeImageURL} alt={imgTags} />
+        </Modal>
+      )}
+    </>
+  );
 }
-
-export default App;
