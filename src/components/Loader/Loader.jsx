@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import BarLoader from 'react-spinners/BarLoader';
-import HashLoader from 'react-spinners/HashLoader';
+import RiseLoader from 'react-spinners/RiseLoader';
 
 const overrideBarLoader = css`
   top: 100px;
@@ -34,6 +34,6 @@ export function Loader() {
 
 export function ModalLoader() {
   return (
-    <HashLoader color={'#3f51b5'} loading={true} css={override} size={100} />
+    <RiseLoader color={'#3f51b5'} loading={true} css={override} size={20} />
   );
 }
