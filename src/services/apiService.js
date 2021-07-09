@@ -8,18 +8,13 @@ async function ApiService(searchQuery, page) {
   if (response.ok) {
     const data = await response.json();
     const { hits } = await data;
+    if (hits.length === 0) {
+      throw new Error(`Нет изображений по ключевому слову ${searchQuery}`);
+    }
     return hits;
   }
 
   throw new Error(`Нет изображений по ключевому слову ${searchQuery}`);
-
-  //   return fetch(`https://pokeapi.co/api/v2/pokemon/${name}`).then(response => {
-  //     if (response.ok) {
-  //       return response.json();
-  //     }
-
-  //     return Promise.reject(new Error(`Нет покемона с именем ${name}`));
-  //   });
 }
 
 const api = {

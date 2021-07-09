@@ -74,14 +74,9 @@ class FetchPictures extends Component {
           pictures: [...prevState.pictures, ...pictures],
           isLoading: false,
         }));
-      } else {
-        this.setState({
-          error: `Нет изображений по ключевому слову ${searchQuery}`,
-          isLoading: false,
-        });
       }
     } catch (error) {
-      this.setState({ error });
+      this.setState({ error: error.message, isLoading: false });
     }
   }
 
