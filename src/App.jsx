@@ -11,13 +11,12 @@ import { Loader, ModalLoader } from 'components/Loader/Loader';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [pictures, setPictures] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
   const [imgTags, setImgTags] = useState('');
-  const [page, setPage] = useState(1);
-  const [pictures, setPictures] = useState([]);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [heightGallery, setHeightGallery] = useState(0);
 
@@ -35,7 +34,7 @@ export default function App() {
           setIsLoading(false);
         }
       } catch (error) {
-        setError(error.message);
+        toast.error(error.message);
         setIsLoading(false);
       }
     }
@@ -47,10 +46,6 @@ export default function App() {
     const gallery = document.querySelector('#imageGallery');
     setHeightGallery(gallery.clientHeight);
   }, [page, searchQuery]);
-
-  useEffect(() => {
-    toast.error(error);
-  }, [error]);
 
   useEffect(() => {
     function scrollTo() {
@@ -73,7 +68,6 @@ export default function App() {
     setSearchQuery(searchQuery);
     setPage(1);
     setPictures([]);
-    setError(null);
   };
 
   const handleImageClick = (largeImageURL, imgTags) => {
