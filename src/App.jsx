@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+
+import ImageGallery from 'components/ImageGallery';
+import apiService from 'services/apiService';
+import Button from 'components/Button';
 import Searchbar from 'components/Searchbar';
-import FetchPictures from 'components/FetchPictures';
 import Modal from 'components/Modal';
-import { ModalLoader } from 'components/Loader/Loader';
+import { Loader, ModalLoader } from 'components/Loader/Loader';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,8 +16,58 @@ export default function App() {
   const [imgTags, setImgTags] = useState('');
   const [page, setPage] = useState(1);
   const [pictures, setPictures] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [heightGallery, setHeightGallery] = useState(0);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      return;
+    }
+    setIsLoading(true);
+
+    async function fetchPictures() {
+      try {
+        const pictures = await apiService.ApiService(searchQuery, page);
+        if (pictures.length !== 0) {
+          setPictures(state => [...state, ...pictures]);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    }
+
+    setTimeout(() => {
+      fetchPictures();
+    }, 500);
+
+    const gallery = document.querySelector('#imageGallery');
+    setHeightGallery(gallery.clientHeight);
+  }, [page, searchQuery]);
+
+  useEffect(() => {
+    toast.error(error);
+  }, [error]);
+
+  useEffect(() => {
+    function scrollTo() {
+      window.scrollTo({
+        top: heightGallery,
+        behavior: 'smooth',
+      });
+    }
+    if (heightGallery !== 0) {
+      scrollTo();
+    }
+  }, [heightGallery, pictures]);
+
+  const onLoadMore = e => {
+    e.preventDefault();
+    setPage(state => state + 1);
+  };
 
   const handleFormSubmit = searchQuery => {
     setSearchQuery(searchQuery);
@@ -26,7 +80,7 @@ export default function App() {
     setLargeImageURL(largeImageURL);
     setImgTags(imgTags);
     toggleModal();
-    setIsLoading(true);
+    setIsModalLoading(true);
   };
 
   const toggleModal = () => {
@@ -35,26 +89,24 @@ export default function App() {
 
   const hideLoaderInModal = () =>
     setTimeout(() => {
-      setIsLoading(false);
+      setIsModalLoading(false);
     }, 350);
 
   return (
     <>
       <Searchbar onSubmit={handleFormSubmit} />
-      <FetchPictures
-        searchQuery={searchQuery}
-        handleImageClick={handleImageClick}
-        page={page}
-        setPage={setPage}
-        pictures={pictures}
-        setPictures={setPictures}
-        error={error}
-        setError={setError}
-      />
+      {isLoading && <Loader />}
+      <ImageGallery pictures={pictures} handleImageClick={handleImageClick} />
+      {pictures.length > 0 && (
+        <Button onClick={onLoadMore} aria-label="add contact">
+          Load more
+        </Button>
+      )}
+
       <ToastContainer autoClose={3000} />
       {showModal && (
         <Modal onClose={toggleModal}>
-          {isLoading && <ModalLoader />}
+          {isModalLoading && <ModalLoader />}
           <img src={largeImageURL} alt={imgTags} onLoad={hideLoaderInModal} />;
         </Modal>
       )}
