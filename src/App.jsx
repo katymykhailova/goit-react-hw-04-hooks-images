@@ -16,26 +16,23 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
   const [imgTags, setImgTags] = useState('');
-  const [isModalLoading, setIsModalLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [heightGallery, setHeightGallery] = useState(0);
+  const [reqStatus, setReqStatus] = useState('idle');
 
   useEffect(() => {
     if (!searchQuery) {
       return;
     }
-    setIsLoading(true);
 
     async function fetchPictures() {
       try {
+        setReqStatus('pending');
         const pictures = await apiService(searchQuery, page);
-        if (pictures.length !== 0) {
-          setPictures(state => [...state, ...pictures]);
-          setIsLoading(false);
-        }
+        setPictures(state => [...state, ...pictures]);
+        setReqStatus('resolved');
       } catch (error) {
         toast.error(error.message);
-        setIsLoading(false);
+        setReqStatus('rejected');
       }
     }
 
@@ -74,7 +71,7 @@ export default function App() {
     setLargeImageURL(largeImageURL);
     setImgTags(imgTags);
     toggleModal();
-    setIsModalLoading(true);
+    setReqStatus('modal');
   };
 
   const toggleModal = () => {
@@ -83,13 +80,13 @@ export default function App() {
 
   const hideLoaderInModal = () =>
     setTimeout(() => {
-      setIsModalLoading(false);
+      setReqStatus('resolved');
     }, 350);
 
   return (
     <>
       <Searchbar onSubmit={handleFormSubmit} />
-      {isLoading && <Loader />}
+      {reqStatus === 'pending' && <Loader />}
       <ImageGallery pictures={pictures} handleImageClick={handleImageClick} />
       {pictures.length > 0 && (
         <Button onClick={onLoadMore} aria-label="add contact">
@@ -100,7 +97,7 @@ export default function App() {
       <ToastContainer autoClose={3000} />
       {showModal && (
         <Modal onClose={toggleModal}>
-          {isModalLoading && <ModalLoader />}
+          {reqStatus === 'modal' && <ModalLoader />}
           <img src={largeImageURL} alt={imgTags} onLoad={hideLoaderInModal} />;
         </Modal>
       )}
