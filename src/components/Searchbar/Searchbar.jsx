@@ -10,15 +10,10 @@ import {
 } from './Searchbar.styled';
 
 export default function Searchbar({ onSubmit }) {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearchQueryChange = event => {
-    setSearchQuery(event.currentTarget.value.toLowerCase());
-  };
-
   const handleSubmit = event => {
     event.preventDefault();
 
+    const searchQuery = event.target.elements.searchQuery.value;
     if (searchQuery.trim() === '') {
       toast.error('Введите поисковый запрос.');
       return;
@@ -40,8 +35,6 @@ export default function Searchbar({ onSubmit }) {
           autocomplete="off"
           autoFocus
           placeholder="Search images and photos"
-          value={searchQuery}
-          onChange={handleSearchQueryChange}
         />
       </SearchForm>
     </Header>
