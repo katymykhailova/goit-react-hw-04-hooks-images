@@ -14,10 +14,9 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [pictures, setPictures] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [largeImageURL, setLargeImageURL] = useState('');
-  const [imgTags, setImgTags] = useState('');
   const [heightGallery, setHeightGallery] = useState(0);
   const [reqStatus, setReqStatus] = useState('idle');
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     if (!searchQuery) {
@@ -68,8 +67,7 @@ export default function App() {
   };
 
   const handleImageClick = (largeImageURL, imgTags) => {
-    setLargeImageURL(largeImageURL);
-    setImgTags(imgTags);
+    setSelectedImage({ largeImageURL, imgTags });
     toggleModal();
     setReqStatus('modal');
   };
@@ -98,7 +96,12 @@ export default function App() {
       {showModal && (
         <Modal onClose={toggleModal}>
           {reqStatus === 'modal' && <ModalLoader />}
-          <img src={largeImageURL} alt={imgTags} onLoad={hideLoaderInModal} />;
+          <img
+            src={selectedImage.largeImageURL}
+            alt={selectedImage.imgTags}
+            onLoad={hideLoaderInModal}
+          />
+          ;
         </Modal>
       )}
     </>
