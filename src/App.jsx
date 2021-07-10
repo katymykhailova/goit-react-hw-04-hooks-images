@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 
 import ImageGallery from 'components/ImageGallery';
-import apiService from 'services/apiService';
+import { apiService } from 'services/apiService';
 import Button from 'components/Button';
 import Searchbar from 'components/Searchbar';
 import Modal from 'components/Modal';
@@ -28,7 +28,7 @@ export default function App() {
 
     async function fetchPictures() {
       try {
-        const pictures = await apiService.ApiService(searchQuery, page);
+        const pictures = await apiService(searchQuery, page);
         if (pictures.length !== 0) {
           setPictures(state => [...state, ...pictures]);
           setIsLoading(false);
