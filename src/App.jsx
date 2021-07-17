@@ -35,9 +35,7 @@ export default function App() {
       }
     }
 
-    setTimeout(() => {
-      fetchPictures();
-    }, 500);
+    fetchPictures();
 
     const gallery = document.querySelector('#imageGallery');
     setHeightGallery(gallery.clientHeight);
